@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flipkart Bulk Lister — Auto-fill Listings from 1st Product</title>
+  <meta name="description" content="Upload your Flipkart listing sheet, auto-fill all product rows from the 1st product, and download the ready-to-upload file.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Ambient background -->
+  <div class="bg-gradient"></div>
+
+  <!-- ═══════════ HEADER ═══════════ -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-name">Flipkart Bulk Lister <span class="pro-tag">AI</span></div>
+          <div class="brand-sub">Auto-fill listings from 1st product</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div id="backend-status" class="status-pill checking" title="FastAPI Backend Status">
+          <span class="status-dot"></span>
+          <span id="backend-status-text">Checking API...</span>
+        </div>
+        <button id="btn-settings" class="icon-btn" title="AI & Server Settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════ MAIN ═══════════ -->
+  <main class="main">
+
+    <!-- ═══ STEP INDICATOR ═══ -->
+    <div class="steps-bar">
+      <div class="step active" id="step-ind-1">
+        <div class="step-num">1</div>
+        <span>Upload Sheet</span>
+      </div>
+      <div class="step-line" id="step-line-1"></div>
+      <div class="step" id="step-ind-2">
+        <div class="step-num">2</div>
+        <span>Review & Generate</span>
+      </div>
+      <div class="step-line" id="step-line-2"></div>
+      <div class="step" id="step-ind-3">
+        <div class="step-num">3</div>
+        <span>Download</span>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 1: UPLOAD ═══ -->
+    <section class="panel" id="panel-upload">
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="file-input" accept=".xlsx,.xlsm,.xls" hidden>
+        <div class="drop-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="12" y1="18" x2="12" y2="12"></line>
+            <polyline points="9 15 12 12 15 15"></polyline>
+          </svg>
+        </div>
+        <h2 class="drop-title">Upload Your Flipkart Listing Sheet</h2>
+        <p class="drop-desc">Make sure the <strong>1st product row is completely filled</strong> — all other rows will copy its data automatically.</p>
+        <div class="drop-actions">
+          <button type="button" class="btn btn-primary" id="btn-browse">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            Choose Excel File
+          </button>
+        </div>
+        <span class="drop-hint">Supports .xls, .xlsx, .xlsm files</span>
+      </div>
+    </section>
+
+    <!-- ═══ STEP 2: REVIEW & GENERATE ═══ -->
+    <section class="panel hidden" id="panel-review">
+      <!-- File info bar -->
+      <div class="file-bar">
+        <div class="file-info">
+          <div class="file-icon-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+          </div>
+          <div>
+            <div class="file-name" id="file-name">template.xlsx</div>
+            <div class="file-meta" id="file-meta">Analyzing...</div>
+          </div>
+        </div>
+        <button id="btn-change-file" class="btn btn-ghost btn-sm">Change File</button>
+      </div>
+
+      <!-- Summary cards -->
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-icon icon-green">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+          </div>
+          <div class="summary-val" id="val-rows">0</div>
+          <div class="summary-label">Product Rows to Fill</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-icon icon-blue">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+          </div>
+          <div class="summary-val" id="val-attrs">0</div>
+          <div class="summary-label">Attributes to Copy</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-icon icon-purple">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          </div>
+          <div class="summary-val" id="val-sheets">0</div>
+          <div class="summary-label">Sheets in File</div>
+        </div>
+      </div>
+
+      <!-- What will happen -->
+      <div class="info-box">
+        <h3 class="info-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          What will happen
+        </h3>
+        <ul class="info-list">
+          <li><span class="check">✓</span> All data from the 1st product (MRP, Price, Brand, Specs, etc.) will be copied to every other row</li>
+          <li><span class="check">✓</span> SKU IDs and Image URLs in each row will <strong>NOT</strong> be overwritten</li>
+          <li><span class="check">✓</span> Unique Model Names will be auto-generated (under 80 characters)</li>
+          <li><span class="check">✓</span> 5 Search Keywords will be generated, separated by <code>::</code></li>
+          <li><span class="check">✓</span> Your original file structure, sheets, and formatting will be preserved</li>
+        </ul>
+      </div>
+
+      <!-- Generate button -->
+      <button id="btn-generate" class="btn btn-primary btn-xl" disabled>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+        <span id="btn-generate-text">Generate Listings</span>
+      </button>
+    </section>
+
+    <!-- ═══ PROCESSING OVERLAY ═══ -->
+    <section class="panel hidden" id="panel-loading">
+      <div class="loading-content">
+        <div class="loader-ring"></div>
+        <h2 class="loading-title">Generating Listings…</h2>
+        <p class="loading-desc">Copying 1st product data and generating unique Model Names & Keywords</p>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-bar"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ STEP 3: RESULTS & DOWNLOAD ═══ -->
+    <section class="panel hidden" id="panel-results">
+      <!-- Success banner -->
+      <div class="success-banner">
+        <div class="success-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        </div>
+        <div>
+          <h2 class="success-title">Listings Ready!</h2>
+          <p class="success-desc" id="success-msg">All product rows have been filled. Your file is ready to upload to Flipkart.</p>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="stats-row">
+        <div class="stat-item">
+          <span class="stat-number" id="stat-total">0</span>
+          <span class="stat-label">Products Filled</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number green" id="stat-models">100%</span>
+          <span class="stat-label">Model Names < 80 chars</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number purple" id="stat-keywords">5/row</span>
+          <span class="stat-label">Search Keywords</span>
+        </div>
+      </div>
+
+      <!-- Download button -->
+      <a id="btn-download" href="#" download class="btn btn-success btn-xl">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        <span id="btn-download-text">Download Updated Sheet</span>
+      </a>
+
+      <!-- Preview table (collapsible) -->
+      <details class="preview-section" id="preview-details">
+        <summary class="preview-toggle">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+          Preview Generated Data
+          <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </summary>
+        <div class="table-wrap">
+          <table class="data-table" id="preview-table">
+            <thead>
+              <tr>
+                <th>Row</th>
+                <th>SKU ID</th>
+                <th>Model Name</th>
+                <th>Chars</th>
+                <th>Search Keywords</th>
+                <th>Image</th>
+                <th>Copied</th>
+              </tr>
+            </thead>
+            <tbody id="preview-tbody"></tbody>
+          </table>
+        </div>
+      </details>
+
+      <!-- Start over -->
+      <button id="btn-start-over" class="btn btn-ghost btn-sm start-over-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+        Process Another File
+      </button>
+    </section>
+
+  </main>
+
+  <!-- ═══════════ SETTINGS MODAL ═══════════ -->
+  <div class="modal-overlay hidden" id="settings-modal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>AI Settings</h3>
+        <button id="btn-close-modal" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-note">Enter your Gemini API key for cloud-powered AI generation. Without a key, the built-in offline engine will be used (works perfectly).</p>
+
+        <div class="field">
+          <label for="input-api-key">Gemini API Key</label>
+          <div class="field-row">
+            <input type="password" id="input-api-key" placeholder="AIzaSy... (optional)">
+            <button type="button" id="btn-toggle-key" class="btn btn-ghost btn-sm">Show</button>
+          </div>
+          <span class="field-help">Stored locally in your browser only.</span>
+        </div>
+
+        <div class="field">
+          <label for="select-model">Model</label>
+          <select id="select-model">
+            <option value="gemini-3.8-flash" selected>Gemini 3.8 Flash (Latest & Recommended)</option>
+            <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+            <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+            <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+          </select>
+        </div>
+
+        <div class="field" style="margin-top: 6px; padding-top: 14px; border-top: 1px solid var(--border);">
+          <label for="input-backend-url">Backend Server URL (FastAPI)</label>
+          <div class="field-row">
+            <input type="text" id="input-backend-url" placeholder="http://127.0.0.1:8000">
+            <button type="button" id="btn-test-backend" class="btn btn-ghost btn-sm">Test API</button>
+          </div>
+          <span class="field-help">Required when running on Firebase Hosting. Connects to your local or deployed Python engine.</span>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button id="btn-save-settings" class="btn btn-primary">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
